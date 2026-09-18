@@ -2,7 +2,7 @@
 .\objects\esp8266_driver.o: Hardware\ESP8266_Driver.h
 .\objects\esp8266_driver.o: .\Start\stm32f10x.h
 .\objects\esp8266_driver.o: .\Start\core_cm3.h
-.\objects\esp8266_driver.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\esp8266_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\esp8266_driver.o: .\Start\system_stm32f10x.h
 .\objects\esp8266_driver.o: .\User\stm32f10x_conf.h
 .\objects\esp8266_driver.o: .\Library\stm32f10x_adc.h
@@ -30,7 +30,7 @@
 .\objects\esp8266_driver.o: .\Library\stm32f10x_wwdg.h
 .\objects\esp8266_driver.o: .\Library\misc.h
 .\objects\esp8266_driver.o: Hardware\Serial.h
-.\objects\esp8266_driver.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\esp8266_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\esp8266_driver.o: .\System\Delay.h
-.\objects\esp8266_driver.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\string.h
-.\objects\esp8266_driver.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\esp8266_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\esp8266_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

@@ -2,7 +2,7 @@
 .\objects\config.o: Hardware\Config.h
 .\objects\config.o: .\Start\stm32f10x.h
 .\objects\config.o: .\Start\core_cm3.h
-.\objects\config.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\config.o: .\Start\system_stm32f10x.h
 .\objects\config.o: .\User\stm32f10x_conf.h
 .\objects\config.o: .\Library\stm32f10x_adc.h
@@ -30,4 +30,4 @@
 .\objects\config.o: .\Library\stm32f10x_wwdg.h
 .\objects\config.o: .\Library\misc.h
 .\objects\config.o: Hardware\W25Q64.h
-.\objects\config.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\string.h
+.\objects\config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

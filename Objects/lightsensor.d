@@ -1,7 +1,7 @@
 .\objects\lightsensor.o: Hardware\LightSensor.c
 .\objects\lightsensor.o: .\Start\stm32f10x.h
 .\objects\lightsensor.o: .\Start\core_cm3.h
-.\objects\lightsensor.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\lightsensor.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\lightsensor.o: .\Start\system_stm32f10x.h
 .\objects\lightsensor.o: .\User\stm32f10x_conf.h
 .\objects\lightsensor.o: .\Library\stm32f10x_adc.h

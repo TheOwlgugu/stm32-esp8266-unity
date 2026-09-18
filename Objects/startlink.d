@@ -1,7 +1,7 @@
 .\objects\startlink.o: User\StartLink.c
 .\objects\startlink.o: .\Start\stm32f10x.h
 .\objects\startlink.o: .\Start\core_cm3.h
-.\objects\startlink.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\startlink.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\startlink.o: .\Start\system_stm32f10x.h
 .\objects\startlink.o: .\User\stm32f10x_conf.h
 .\objects\startlink.o: .\Library\stm32f10x_adc.h
@@ -30,8 +30,8 @@
 .\objects\startlink.o: .\Library\misc.h
 .\objects\startlink.o: .\Hardware\Config.h
 .\objects\startlink.o: .\Hardware\Serial3.h
-.\objects\startlink.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\startlink.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\startlink.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\startlink.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
 .\objects\startlink.o: .\Hardware\OLED.h
-.\objects\startlink.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\string.h
-.\objects\startlink.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\startlink.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\startlink.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

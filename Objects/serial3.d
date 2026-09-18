@@ -2,7 +2,7 @@
 .\objects\serial3.o: Hardware\Serial3.h
 .\objects\serial3.o: .\Start\stm32f10x.h
 .\objects\serial3.o: .\Start\core_cm3.h
-.\objects\serial3.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\serial3.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\serial3.o: .\Start\system_stm32f10x.h
 .\objects\serial3.o: .\User\stm32f10x_conf.h
 .\objects\serial3.o: .\Library\stm32f10x_adc.h
@@ -29,5 +29,5 @@
 .\objects\serial3.o: .\Library\stm32f10x_usart.h
 .\objects\serial3.o: .\Library\stm32f10x_wwdg.h
 .\objects\serial3.o: .\Library\misc.h
-.\objects\serial3.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\serial3.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\serial3.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\serial3.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h

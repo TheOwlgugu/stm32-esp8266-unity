@@ -1,7 +1,7 @@
 .\objects\myspi.o: Hardware\MySPI.c
 .\objects\myspi.o: .\Start\stm32f10x.h
 .\objects\myspi.o: .\Start\core_cm3.h
-.\objects\myspi.o: D:\soft\danpianji\Keil5 C51\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\myspi.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\myspi.o: .\Start\system_stm32f10x.h
 .\objects\myspi.o: .\User\stm32f10x_conf.h
 .\objects\myspi.o: .\Library\stm32f10x_adc.h
