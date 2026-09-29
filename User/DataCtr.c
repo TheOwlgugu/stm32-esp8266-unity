@@ -26,7 +26,7 @@ void DataCtr_Init(void)
     last_light = cur_light;
 
     uint16_t ad = AD_GetValue();
-    cur_temp   = ((float)ad / 4095 * 60.0f) - 8.0f;
+    cur_temp   = ((float)(4095 - ad )/ 4095 * 60.0f) - 8.0;
     last_temp  = cur_temp;
 
     has_pending  = 0;
@@ -38,7 +38,7 @@ void DataCtr_Update(void)
 {
     cur_light = LightSensor_Get();
     uint16_t ad = AD_GetValue();
-    cur_temp = ((float)ad / 4095 * 60.0f) - 8.0f;
+    cur_temp = ((float)(4095 - ad )/ 4095 * 60.0f) - 8.0;
 }
 
 uint8_t DataCtr_IsLightChanged(void)
