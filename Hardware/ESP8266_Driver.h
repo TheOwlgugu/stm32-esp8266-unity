@@ -11,6 +11,8 @@ uint8_t ESP8266_GetIP(char *ip_buf);
 uint8_t ESP8266_ConnectServer(const char *ip, uint16_t port);
 uint8_t ESP8266_SendData(const char *data);
 uint8_t ESP8266_EnterTransparentMode(void);
+uint8_t ESP8266_CheckTCP(void);
+uint8_t ESP8266_Reconnect(void);
 void ESP8266_ExitTransparentMode(void);
 void ESP8266_CloseConnection(void);
 void ESP8266_Reset(void);

@@ -31,6 +31,11 @@
 .\objects\esp8266_driver.o: .\Library\misc.h
 .\objects\esp8266_driver.o: Hardware\Serial.h
 .\objects\esp8266_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\esp8266_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
 .\objects\esp8266_driver.o: .\System\Delay.h
 .\objects\esp8266_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\esp8266_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\esp8266_driver.o: Hardware\MySPI.h
+.\objects\esp8266_driver.o: Hardware\W25Q64.h
+.\objects\esp8266_driver.o: Hardware\Config.h
+.\objects\esp8266_driver.o: Hardware\Serial3.h

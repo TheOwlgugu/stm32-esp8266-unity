@@ -770,6 +770,16 @@
               <FileType>1</FileType>
               <FilePath>.\Hardware\Serial3.c</FilePath>
             </File>
+            <File>
+              <FileName>Watchdog.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Watchdog.h</FilePath>
+            </File>
+            <File>
+              <FileName>Watchdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\Watchdog.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -784,6 +794,16 @@
               <FileName>Delay.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\System\Delay.h</FilePath>
+            </File>
+            <File>
+              <FileName>Millis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\System\Millis.c</FilePath>
+            </File>
+            <File>
+              <FileName>Millis.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\System\Millis.h</FilePath>
             </File>
           </Files>
         </Group>
