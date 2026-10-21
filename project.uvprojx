@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Start;.\User;.\Library;.\System;.\Hardware</IncludePath>
+              <IncludePath>.\Start;.\User;.\Library;.\System;.\Hardware;.\Mode</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -780,6 +780,16 @@
               <FileType>1</FileType>
               <FilePath>.\Hardware\Watchdog.c</FilePath>
             </File>
+            <File>
+              <FileName>Ra08_Driver.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Ra08_Driver.h</FilePath>
+            </File>
+            <File>
+              <FileName>Ra08_Driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\Ra08_Driver.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -840,15 +850,70 @@
               <FileType>5</FileType>
               <FilePath>.\User\StartLink.h</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Mode</GroupName>
+          <Files>
             <File>
-              <FileName>DataCtr.h</FileName>
+              <FileName>Network.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\User\DataCtr.h</FilePath>
+              <FilePath>.\Mode\Network.h</FilePath>
             </File>
             <File>
-              <FileName>DataCtr.c</FileName>
+              <FileName>Network.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\User\DataCtr.c</FilePath>
+              <FilePath>.\Mode\Network.c</FilePath>
+            </File>
+            <File>
+              <FileName>WiFiMode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Mode\WiFiMode.c</FilePath>
+            </File>
+            <File>
+              <FileName>WiFiMode.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Mode\WiFiMode.h</FilePath>
+            </File>
+            <File>
+              <FileName>LoRaMode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Mode\LoRaMode.c</FilePath>
+            </File>
+            <File>
+              <FileName>LoRaMode.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Mode\LoRaMode.h</FilePath>
+            </File>
+            <File>
+              <FileName>DataMode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Mode\DataMode.c</FilePath>
+            </File>
+            <File>
+              <FileName>DataMode.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Mode\DataMode.h</FilePath>
+            </File>
+            <File>
+              <FileName>LightMode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Mode\LightMode.c</FilePath>
+            </File>
+            <File>
+              <FileName>LightMode.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Mode\LightMode.h</FilePath>
+            </File>
+            <File>
+              <FileName>TempMode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Mode\TempMode.c</FilePath>
+            </File>
+            <File>
+              <FileName>TempMode.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Mode\TempMode.h</FilePath>
             </File>
           </Files>
         </Group>

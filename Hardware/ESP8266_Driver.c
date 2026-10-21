@@ -22,11 +22,12 @@ static void ClearRxBuffer(void)
 static uint8_t WaitForResponse(const char *expected, uint32_t timeout_ms)
 {
     uint32_t cnt = 0;
-    // ★ 删掉了这里的 ClearRxBuffer()
 
     while (cnt < timeout_ms)
     {
-        while (Serial_Available())
+        uint16_t max_bytes = 256;      /* prevent infinite loop */
+
+        while (Serial_Available() && max_bytes > 0)
         {
             uint8_t byte = Serial_GetByte();
             if (rx_index < RX_BUF_SIZE - 1)
@@ -34,9 +35,12 @@ static uint8_t WaitForResponse(const char *expected, uint32_t timeout_ms)
                 rx_buf[rx_index++] = byte;
                 rx_buf[rx_index] = '\0';
             }
+            max_bytes--;
         }
+
         if (expected != NULL && strstr(rx_buf, expected) != NULL)
             return 1;
+
         Delay_ms(1);
         cnt++;
     }
@@ -123,19 +127,30 @@ uint8_t ESP8266_SendData(const char *data)
     char cmd[24];
     sprintf(cmd, "AT+CIPSEND=%d\r\n", len);
 
+    Serial3_Printf("[CIPSEND] TX: %s", cmd);
+
     ClearRxBuffer();
     Serial_SendString(cmd);
+
     if (!WaitForResponse(">", 3000))
+    {
+        Serial3_Printf("[CIPSEND] Timeout waiting '>', RX: %s\r\n", rx_buf);
         return 0;
+    }
+    Serial3_SendString("[CIPSEND] Got '>'\r\n");
 
     Serial_SendString((char*)data);
 
-    // ★ 等待 "SEND OK" 而不是只等 "OK"
     if (!WaitForResponse("SEND OK", 5000))
+    {
+        Serial3_Printf("[CIPSEND] Timeout waiting SEND OK, RX: %s\r\n", rx_buf);
         return 0;
+    }
+    Serial3_SendString("[CIPSEND] SEND OK\r\n");
 
     return 1;
 }
+
 uint8_t ESP8266_EnterTransparentMode(void)
 {
     if (!ESP8266_SendCmd("AT+CIPMUX=0\r\n", "OK", 2000))
@@ -211,7 +226,7 @@ uint8_t ESP8266_Reconnect(void)
 
     // 3. 重新连接 TCP 服务器
     Delay_ms(500);
-    if (!ESP8266_ConnectServer(config.server_ip, config.server_port))
+    if (!ESP8266_ConnectServer(config.wifi_ip, config.wifi_port))
     {
         Serial3_SendString("Servaer Fail\r\n");
         return 0;

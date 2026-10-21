@@ -195,3 +195,18 @@ void USART1_IRQHandler(void)
         USART_ClearFlag(USART1, USART_FLAG_ORE);
     }
 }
+
+void Serial_SetBaudRate(uint32_t baud)
+{
+    USART_Cmd(USART1, DISABLE);
+    USART_InitTypeDef s;
+    s.USART_BaudRate = baud;
+    s.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    s.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
+    s.USART_Parity = USART_Parity_No;
+    s.USART_StopBits = USART_StopBits_1;
+    s.USART_WordLength = USART_WordLength_8b;
+    USART_Init(USART1, &s);
+    USART_Cmd(USART1, ENABLE);
+}
+

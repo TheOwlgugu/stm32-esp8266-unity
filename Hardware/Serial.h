@@ -12,6 +12,7 @@ void Serial_SendArray(uint8_t *Array, uint16_t Length);
 void Serial_SendString(char *String);
 void Serial_SendNumber(uint32_t Number, uint8_t Length);
 void Serial_Printf(char *format, ...);
+void Serial_SetBaudRate(uint32_t baud); //修改波特率
 
 /* ==================== 环形缓冲区接收 ==================== */
 uint8_t Serial_Available(void);   // 缓冲区是否有数据

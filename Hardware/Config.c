@@ -7,9 +7,7 @@ Config_t config;
 
 /**
   * @brief   CRC8 校验（多项式 0x07）
-  * @param   data 数据指针
-  * @param   len  数据长度
-  * @retval  CRC8 值
+  * @note    用于校验配置数据完整性，防止 Flash 损坏
   */
 static uint8_t CRC8(const uint8_t *data, uint32_t len)
 {
@@ -29,56 +27,63 @@ static uint8_t CRC8(const uint8_t *data, uint32_t len)
 }
 
 /**
-  * @brief   设置默认配置（仅填充结构体，不写入 Flash）
-  * @param   无
-  * @retval  无
+  * @brief   设置默认配置（只填内存，不写 Flash）
+  * @note    第一次上电或配置损坏时调用
   */
 void Config_SetDefault(void)
 {
     memset(&config, 0, sizeof(Config_t));
     config.magic = CONFIG_MAGIC;
-    strncpy(config.device_id,  "001",           sizeof(config.device_id) - 1);
-    strncpy(config.wifi_ssid,  "DefaultWiFi",   sizeof(config.wifi_ssid) - 1);
-    strncpy(config.wifi_pwd,   "DefaultPWD",    sizeof(config.wifi_pwd)  - 1);
-    strncpy(config.server_ip,  "192.168.1.100", sizeof(config.server_ip) - 1);
-    config.server_port = 8888;
-    config.interval_ms = 5000;
-    // CRC 在 Config_Save 中计算并填充
+
+    /* --- 通用默认值 --- */
+    strncpy(config.device_id, "001", sizeof(config.device_id) - 1);
+    strncpy(config.mode,      "000", sizeof(config.mode) - 1);  // 光照 + LoRa
+    config.interval_ms = 10000;   // LoRa 占空比限制 ≥6 秒，默认 10 秒
+
+    /* --- WiFi 默认值 --- */
+    strncpy(config.wifi_ssid, "main",   sizeof(config.wifi_ssid) - 1);
+    strncpy(config.wifi_pwd,  "admin1234",    sizeof(config.wifi_pwd)  - 1);
+    strncpy(config.wifi_ip,   "169.254.169.110", sizeof(config.wifi_ip)   - 1);
+    config.wifi_port = 4000;
+
+/* ---------- LoRa 配置 ---------- */
+    strncpy(config.lora_deveui, "1d4517b623310c86", sizeof(config.lora_deveui) - 1);  // ★
+    strncpy(config.lora_appeui, "248df2c2303ac457", sizeof(config.lora_appeui) - 1);  // ★
+    strncpy(config.lora_appkey, "8a5b1303a0ccc45ac2b9aca1263d2c27", sizeof(config.lora_appkey) - 1);  // ★
+    config.lora_class = 0;         // 默认 Class A
+    config.lora_provisioned = 0;   // 未配置过
 }
 
 /**
   * @brief   保存配置到 W25Q64
-  * @param   无
-  * @retval  无
-  * @note    写入前会擦除整个 4KB 扇区，配置数据远小于扇区大小
+  * @note    先算 CRC，再擦除扇区，最后写入
   */
 void Config_Save(void)
 {
-    // 1. 计算 CRC（计算范围：从 magic 到 interval_ms，即除 crc 外的所有字节）
+    /* 1. 计算 CRC（不包含 crc 字段本身） */
     config.crc = CRC8((uint8_t*)&config, sizeof(Config_t) - 1);
 
-    // 2. 擦除扇区（W25Q64 写入前必须擦除）
+    /* 2. 擦除扇区（W25Q64 写入前必须先擦除） */
     W25Q64_SectorErase(CONFIG_FLASH_ADDR);
 
-    // 3. 写入配置
+    /* 3. 写入配置（200字节 < 页大小256，一次写完） */
     W25Q64_PageProgram(CONFIG_FLASH_ADDR, (uint8_t*)&config, sizeof(Config_t));
 }
 
 /**
-  * @brief   初始化配置：从 W25Q64 读取，校验失败则写入默认值
-  * @param   无
-  * @retval  无
+  * @brief   初始化配置：读 Flash，校验，无效则写默认值
+  * @note    在 main 里调用一次
   */
 void Config_Init(void)
 {
-    // 1. 从 W25Q64 读取配置
+    /* 1. 从 W25Q64 读取配置到内存 */
     W25Q64_ReadData(CONFIG_FLASH_ADDR, (uint8_t*)&config, sizeof(Config_t));
 
-    // 2. 校验魔数和 CRC
+    /* 2. 校验魔数和 CRC */
     uint8_t crc_calc = CRC8((uint8_t*)&config, sizeof(Config_t) - 1);
     if (config.magic != CONFIG_MAGIC || config.crc != crc_calc)
     {
-        // 校验失败，使用默认配置并保存
+        /* 3. 校验失败（首次上电或数据损坏），写默认值 */
         Config_SetDefault();
         Config_Save();
     }

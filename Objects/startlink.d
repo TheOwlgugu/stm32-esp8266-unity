@@ -1,4 +1,5 @@
 .\objects\startlink.o: User\StartLink.c
+.\objects\startlink.o: User\StartLink.h
 .\objects\startlink.o: .\Start\stm32f10x.h
 .\objects\startlink.o: .\Start\core_cm3.h
 .\objects\startlink.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -32,6 +33,5 @@
 .\objects\startlink.o: .\Hardware\Serial3.h
 .\objects\startlink.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\startlink.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
-.\objects\startlink.o: .\Hardware\OLED.h
 .\objects\startlink.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\startlink.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
