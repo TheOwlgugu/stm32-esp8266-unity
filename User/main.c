@@ -7,104 +7,136 @@
 #include "W25Q64.h"
 #include "Config.h"
 #include "StartLink.h"
+#include "NodeMode.h"
 #include "Network.h"
 #include "DataMode.h"
-#include "Watchdog.h"
+#include "SystemData.h"
+#include "Power.h"
+#include "SoftI2C.h"
+
+/* 调试：上电扫描 I2C 总线，确认 OLED/传感器地址；确认后改成 0 */
+#define I2C_SCAN_ON_BOOT  1
 
 int main(void)
 {
-    /* ========== 1. 外设初始化（只做一次） ========== */
+    /* ========== 1. 电源脚先就位（默认全关） ========== */
+    Power_Rail_Init();
+
+    /* 2. 给 OLED + 传感器上电，等电源稳定 */
+    Power_Sensor_ON();
+    Delay_ms(100);
+
+    /* 3. 总线和屏幕最先初始化，后面才能显示其他外设状态 */
+    SoftI2C_Init();
     OLED_Init();
     Serial_Init();
     Serial3_Init();
+
+#if I2C_SCAN_ON_BOOT
+    /* 调试：扫描 I2C 总线，有应答的地址打印出来 */
+    Serial3_SendString("I2C:");
+    for (uint8_t addr = 0x08; addr < 0x78; addr++)
+    {
+        if (SoftI2C_Probe(addr))
+            Serial3_Printf(" %02X", (unsigned int)addr);
+    }
+    Serial3_SendString("\r\n");
+#endif
+
+    /* 4. 配置、运行模式、毫秒计数 */
     W25Q64_Init();
     Config_Init();
+
+    /* 开机 5 秒内从 USART3 发任意字符，进入配置模式 */
+    StartLink_BootWindow(POWER_BOOT_GRACE_MS);
+
+    NodeMode_LoadFromConfig();   // 把 config.mode 解析成运行期模式
+    NodeMode_Print();            // 串口 + OLED 显示当前模式
     Millis_Init();
+    SystemData_Init();
+    
+    /* 5. 按网络模式控制 LoRa 电源（WiFi 模式关断，避免收到 AT 指令） */
+    if (g_nodeMode.net == NET_TYPE_LORA) Power_Lora_ON();
+    else                                 Power_Lora_OFF();
+
+    /* 6. 按模式初始化传感器（屏幕显示初始化进度） */
+    if (!DataMode_Init())
+        Serial3_SendString("Init warn\r\n");
+
+    /* 7. RTC 最后初始化，出错时串口已经可用 */
+    Power_RTC_Init();
+
+    /* 没有传感器时，OLED 也一起断电，避免待机耗电 */
+    if (!NodeMode_HasAnySensor())
+        Power_Sensor_OFF();
+
+    /* EXTI & NVIC 配置 (RTC唤醒) */
+    EXTI_InitTypeDef EXTI_InitStructure;
+    EXTI_InitStructure.EXTI_Line = EXTI_Line17;
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+    EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+    EXTI_Init(&EXTI_InitStructure);
+
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = RTCAlarm_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_Init(&NVIC_InitStructure);
 
     Serial3_SendString("System boot\r\n");
-    Delay_ms(500);
 
-    if (Watchdog_IsResetByIWDG())
-        Serial3_SendString("Last reset: Watchdog\r\n");
+//    /* ========== 2. 网络连接 (常驻) ========== */
+//    g_connType = (g_nodeMode.net == NET_TYPE_LORA) ? NET_LORA : NET_WIFI;
+//    
+//    if (!Network_Connect()) {
+//        Serial3_SendString("Network Connect Failed!\r\n");
+//        while(1);
+//    }
+//    （DataMode_Init 已在上面调用）
 
-    /* ========== 2. 大循环：连接失败就回配置模式 ========== */
+    /* ========== 3. 低功耗主循环 ========== */
+    // 注意：不能用 millis() 计时，TIM2 在 STOP 模式下会停，休眠的时间不会被算进去
+    uint32_t last_send_sec = Power_GetSeconds(); // 记录上次发送时间（RTC 秒数）
+    uint32_t tick = 0;
+
     while (1)
     {
-        /* ---------- 2.1 2秒监听窗口 ---------- */
-        uint32_t tick = 0;
-        uint8_t got_s = 0;
-        Serial3_SendString("Send 's' in 2s to config...\r\n");
+        tick++;
+        // OLED 一行只有 16 个字符，所以提示文字尽量短（串口和 OLED 显示同样的内容）
+        Serial3_Printf("\r\nWake Tick:%u\r\n", (unsigned int)tick);
+        
+        /* 3.1 供电与采集 */
+        // 如果模式不是全0，说明有传感器要工作
+        if (NodeMode_HasAnySensor()) {
+            Power_Sensor_ON();
 
-        while (tick < 2000)
-        {
-            if (Serial3_GetRxFlag())
-            {
-                if (Serial3_GetRxData() == 's') { got_s = 1; break; }
-            }
-            Delay_ms(1);
-            tick++;
+            /* SCD40 周期测量需要持续供电，不能采完就断 */
+            if (!DataMode_NeedsContinuousPower())
+                Delay_ms(DataMode_GetSettleMs()); // 按当前模式取上电稳定时间
+
+            DataMode_Read_All(); // 去读数据，存入 sysData
+
+            if (!DataMode_NeedsContinuousPower())
+                Power_Sensor_OFF(); // 采完立刻断电
         }
 
-        if (got_s)
-        {
-            StartLink();       // 配置模式（收到 exit 才返回）
-            Config_Init();     // 重新加载配置
+        /* 3.2 判断时间闸门是否到了 */
+        // 如果还没到发送间隔，就不发
+        if (Power_GetSeconds() - last_send_sec >= config.send_interval_ms / 1000) {
+            Serial3_SendString("Time to send!\r\n");
+
+            DataMode_Send_Data(); // 把刚才采到的数据打包发出去
+            SystemData_ClearFlags(); // 发完再清标志，慢速传感器不会丢数据
+
+            last_send_sec = Power_GetSeconds(); // 更新发送时间
         }
 
-        /* ---------- 2.2 解析网络类型 ---------- */
-        char netType = config.mode[2];
-        if (netType == '0')      g_connType = NET_WIFI;
-        else if (netType == '1') g_connType = NET_LORA;
-        else
-        {
-            Serial3_SendString("mode[2] must be 0 or 1\r\n");
-            Serial3_SendString("Retry in 3s...\r\n");
-            Delay_ms(3000);
-            continue;   // 回到 while 开头，重新进入监听窗口
-        }
-
-        Serial3_Printf("Network: %s\r\n",
-                       g_connType == NET_WIFI ? "WiFi" : "LoRa");
-        Serial3_SendString("Connecting...\r\n");
-
-        /* ---------- 2.3 连接网络 ---------- */
-        OLED_Clear();
-        OLED_ShowString(1, 1, "Connecting...");
-
-        if (!Network_Connect())
-        {
-            Serial3_SendString("Connect failed! Back to config mode.\r\n");
-            OLED_Clear();
-            OLED_ShowString(1, 1, "Connect FAIL");
-            OLED_ShowString(2, 1, "Back to config");
-            OLED_ShowString(3, 1, "in 3s...");
-            Delay_ms(3000);
-            continue;   // ★ 回到 while 开头，重新进入监听窗口
-        }
-
-        /* ---------- 2.4 初始化数据模式 ---------- */
-        if (!DataMode_Init())
-        {
-            Serial3_SendString("DataMode init failed!\r\n");
-            OLED_Clear();
-            OLED_ShowString(1, 1, "DataMode FAIL");
-            Delay_ms(3000);
-            continue;
-        }
-
-        /* ---------- 2.5 启动看门狗 ---------- */
-        Watchdog_Init(30000);
-
-        Serial3_SendString("=== Enter main loop ===\r\n");
-        OLED_Clear();
-        OLED_ShowString(1, 1, config.device_id);
-
-        /* ---------- 2.6 主循环 ---------- */
-        while (1)
-        {
-            DataMode_Run();
-            Watchdog_Feed();
-            Delay_ms(500);
-        }
+        /* 3.3 进入休眠 */
+        // 假设固定每 2 秒醒来一次。你可以把 2000 写进 config 里
+        Serial3_SendString("Go to sleep...\r\n");
+        Power_Sleep(2000); 
     }
 }
+

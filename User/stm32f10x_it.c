@@ -136,6 +136,23 @@ void SysTick_Handler(void)
 {
 }
 
+/**
+  * @brief  RTC 闹钟中断服务函数 (对应硬件 EXTI Line 17)
+  * @note   唤醒后必须清除标志位，否则会无限进中断
+  */
+void RTCAlarm_IRQHandler(void)
+{
+    /* 判断是否是 RTC 闹钟中断触发 */
+    if (RTC_GetITStatus(RTC_IT_ALR) != RESET)
+    {
+        /* 1. 清除 RTC 闹钟标志位 */
+        RTC_ClearITPendingBit(RTC_IT_ALR);
+        
+        /* 2. 清除 EXTI Line 17 挂起标志位 */
+        EXTI_ClearITPendingBit(EXTI_Line17);
+    }
+}
+
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */

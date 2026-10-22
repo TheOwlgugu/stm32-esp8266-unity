@@ -29,3 +29,5 @@
 .\objects\oled.o: .\Library\stm32f10x_wwdg.h
 .\objects\oled.o: .\Library\misc.h
 .\objects\oled.o: Hardware\OLED_Font.h
+.\objects\oled.o: Hardware\SoftI2C.h
+.\objects\oled.o: .\System\Delay.h

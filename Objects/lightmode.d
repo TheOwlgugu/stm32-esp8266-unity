@@ -29,4 +29,3 @@
 .\objects\lightmode.o: .\Library\stm32f10x_usart.h
 .\objects\lightmode.o: .\Library\stm32f10x_wwdg.h
 .\objects\lightmode.o: .\Library\misc.h
-.\objects\lightmode.o: .\Hardware\LightSensor.h

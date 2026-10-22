@@ -671,6 +671,16 @@
               <FilePath>.\Hardware\LED.h</FilePath>
             </File>
             <File>
+              <FileName>SoftI2C.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\SoftI2C.c</FilePath>
+            </File>
+            <File>
+              <FileName>SoftI2C.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\SoftI2C.h</FilePath>
+            </File>
+            <File>
               <FileName>OLED.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Hardware\OLED.c</FilePath>
@@ -686,14 +696,14 @@
               <FilePath>.\Hardware\OLED_Font.h</FilePath>
             </File>
             <File>
-              <FileName>LightSensor.c</FileName>
+              <FileName>Serial2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Hardware\LightSensor.c</FilePath>
+              <FilePath>.\Hardware\Serial2.c</FilePath>
             </File>
             <File>
-              <FileName>LightSensor.h</FileName>
+              <FileName>Serial2.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Hardware\LightSensor.h</FilePath>
+              <FilePath>.\Hardware\Serial2.h</FilePath>
             </File>
             <File>
               <FileName>AD.c</FileName>
@@ -789,6 +799,26 @@
               <FileName>Ra08_Driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Hardware\Ra08_Driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>Power.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\Power.c</FilePath>
+            </File>
+            <File>
+              <FileName>Power.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Power.h</FilePath>
+            </File>
+            <File>
+              <FileName>SystemData.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\SystemData.c</FilePath>
+            </File>
+            <File>
+              <FileName>SystemData.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\SystemData.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -886,6 +916,16 @@
               <FilePath>.\Mode\LoRaMode.h</FilePath>
             </File>
             <File>
+              <FileName>NodeMode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Mode\NodeMode.c</FilePath>
+            </File>
+            <File>
+              <FileName>NodeMode.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Mode\NodeMode.h</FilePath>
+            </File>
+            <File>
               <FileName>DataMode.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Mode\DataMode.c</FilePath>
@@ -894,6 +934,26 @@
               <FileName>DataMode.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Mode\DataMode.h</FilePath>
+            </File>
+            <File>
+              <FileName>Pms7003Mode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Mode\Pms7003Mode.c</FilePath>
+            </File>
+            <File>
+              <FileName>Pms7003Mode.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Mode\Pms7003Mode.h</FilePath>
+            </File>
+            <File>
+              <FileName>Scd40Mode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Mode\Scd40Mode.c</FilePath>
+            </File>
+            <File>
+              <FileName>Scd40Mode.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Mode\Scd40Mode.h</FilePath>
             </File>
             <File>
               <FileName>LightMode.c</FileName>

@@ -3,10 +3,10 @@
 
 #include "stm32f10x.h"
 
-/* 读光照：返回 0=Off, 1=On */
-int Light_Read(void);
+/* 光照传感器（数字 DO，接 PA1）：初始化 */
+void LightMode_Init(void);
 
-/* 判断光照是否变化：值不同就算变化 */
-uint8_t Light_IsChanged(int new_val, int old_val);
+/* 读光照 DO：返回 0/1（极性取决于模块，遮光前后看变化即可） */
+uint8_t LightMode_Read(void);
 
 #endif

@@ -38,6 +38,9 @@
 .\objects\main.o: .\Hardware\W25Q64.h
 .\objects\main.o: .\Hardware\Config.h
 .\objects\main.o: User\StartLink.h
+.\objects\main.o: .\Mode\NodeMode.h
 .\objects\main.o: .\Mode\Network.h
 .\objects\main.o: .\Mode\DataMode.h
-.\objects\main.o: .\Hardware\Watchdog.h
+.\objects\main.o: .\Hardware\SystemData.h
+.\objects\main.o: .\Hardware\Power.h
+.\objects\main.o: .\Hardware\SoftI2C.h

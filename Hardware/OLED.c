@@ -1,69 +1,15 @@
 #include "stm32f10x.h"
 #include "OLED_Font.h"
+#include "SoftI2C.h"
+#include "Delay.h"
 
-/*引脚配置*/
-#define OLED_W_SCL(x)		GPIO_WriteBit(GPIOB, GPIO_Pin_8, (BitAction)(x))
-#define OLED_W_SDA(x)		GPIO_WriteBit(GPIOB, GPIO_Pin_9, (BitAction)(x))
+/* OLED 的 7 位 I2C 地址：0x3C（0x78）或 0x3D（0x7A），上电自动识别 */
+#define OLED_I2C_ADDR_DEFAULT	0x3C
 
-/*引脚初始化*/
-void OLED_I2C_Init(void)
-{
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-	
-	GPIO_InitTypeDef GPIO_InitStructure;
- 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
- 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
- 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-	OLED_W_SCL(1);
-	OLED_W_SDA(1);
-}
+/* 调试：初始化后全屏点亮 0.5 秒，确认屏是否真的工作；确认后改 0 */
+#define OLED_TEST_PATTERN	0
 
-/**
-  * @brief  I2C开始
-  * @param  无
-  * @retval 无
-  */
-void OLED_I2C_Start(void)
-{
-	OLED_W_SDA(1);
-	OLED_W_SCL(1);
-	OLED_W_SDA(0);
-	OLED_W_SCL(0);
-}
-
-/**
-  * @brief  I2C停止
-  * @param  无
-  * @retval 无
-  */
-void OLED_I2C_Stop(void)
-{
-	OLED_W_SDA(0);
-	OLED_W_SCL(1);
-	OLED_W_SDA(1);
-}
-
-/**
-  * @brief  I2C发送一个字节
-  * @param  Byte 要发送的一个字节
-  * @retval 无
-  */
-void OLED_I2C_SendByte(uint8_t Byte)
-{
-	uint8_t i;
-	for (i = 0; i < 8; i++)
-	{
-		OLED_W_SDA(!!(Byte & (0x80 >> i)));
-		OLED_W_SCL(1);
-		OLED_W_SCL(0);
-	}
-	OLED_W_SCL(1);	//额外的一个时钟，不处理应答信号
-	OLED_W_SCL(0);
-}
+static uint8_t oled_addr = OLED_I2C_ADDR_DEFAULT;
 
 /**
   * @brief  OLED写命令
@@ -72,11 +18,11 @@ void OLED_I2C_SendByte(uint8_t Byte)
   */
 void OLED_WriteCommand(uint8_t Command)
 {
-	OLED_I2C_Start();
-	OLED_I2C_SendByte(0x78);		//从机地址
-	OLED_I2C_SendByte(0x00);		//写命令
-	OLED_I2C_SendByte(Command); 
-	OLED_I2C_Stop();
+	uint8_t buf[2];
+
+	buf[0] = 0x00;		//控制字节：写命令
+	buf[1] = Command;
+	SoftI2C_Write(oled_addr, buf, 2);
 }
 
 /**
@@ -86,11 +32,11 @@ void OLED_WriteCommand(uint8_t Command)
   */
 void OLED_WriteData(uint8_t Data)
 {
-	OLED_I2C_Start();
-	OLED_I2C_SendByte(0x78);		//从机地址
-	OLED_I2C_SendByte(0x40);		//写数据
-	OLED_I2C_SendByte(Data);
-	OLED_I2C_Stop();
+	uint8_t buf[2];
+
+	buf[0] = 0x40;		//控制字节：写数据
+	buf[1] = Data;
+	SoftI2C_Write(oled_addr, buf, 2);
 }
 
 /**
@@ -265,6 +211,7 @@ void OLED_ShowBinNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Leng
 
 /**
   * @brief  OLED初始化
+  * @note   调用前需要先调用 SoftI2C_Init()
   * @param  无
   * @retval 无
   */
@@ -277,8 +224,11 @@ void OLED_Init(void)
 		for (j = 0; j < 1000; j++);
 	}
 	
-	OLED_I2C_Init();			//端口初始化
 	
+	/* 自动识别地址：0x3C 或 0x3D，避免模块地址跳线不同导致黑屏 */
+	if (SoftI2C_Probe(0x3C))      oled_addr = 0x3C;
+	else if (SoftI2C_Probe(0x3D)) oled_addr = 0x3D;
+
 	OLED_WriteCommand(0xAE);	//关闭显示
 	
 	OLED_WriteCommand(0xD5);	//设置显示时钟分频比/振荡器频率
@@ -318,4 +268,21 @@ void OLED_Init(void)
 	OLED_WriteCommand(0xAF);	//开启显示
 		
 	OLED_Clear();				//OLED清屏
+
+#if OLED_TEST_PATTERN
+	/* 全屏点亮 0.5 秒，能亮说明初始化成功，问题在后续显示 */
+	for (uint8_t page = 0; page < 8; page++)
+	{
+		OLED_SetCursor(page, 0);
+		for (uint8_t col = 0; col < 128; col++)
+			OLED_WriteData(0xFF);
+	}
+	Delay_ms(500);
+	OLED_Clear();
+
+	/* 再直接写一行字，验证字库和 OLED_ShowString 也正常 */
+	OLED_ShowString(1, 1, "OLED OK");
+	Delay_ms(500);
+	OLED_Clear();
+#endif
 }

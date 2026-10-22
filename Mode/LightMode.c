@@ -1,12 +1,25 @@
 #include "LightMode.h"
-#include "LightSensor.h"
 
-int Light_Read(void)
+/**
+  * @brief  光照传感器初始化
+  * @note   数字 DO 输出，PA1 上拉输入
+  */
+void LightMode_Init(void)
 {
-    return (LightSensor_Get() == 0) ? 1 : 0;
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
+    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_1;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
-uint8_t Light_IsChanged(int new_val, int old_val)
+/**
+  * @brief  读取光照 DO
+  * @retval 0/1
+  */
+uint8_t LightMode_Read(void)
 {
-    return (new_val != old_val);
+    return GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1);
 }
